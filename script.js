@@ -3,6 +3,8 @@
  (function() {
 
     window.addEventListener("load", init);
+    
+    const COLORS = ["blank", "blue", "red", "black"];
 
     function init() {
       createBoard()
@@ -18,6 +20,8 @@
                 let cell = gen("td");
                 cell.setAttribute("row", row);
                 cell.setAttribute("col", col);
+                cell.setAttribute("color", COLORS[0]);
+                cell.addEventListener("mousedown", cycleColors);
 
                 let inputContainer = gen("div")
                 inputContainer.classList.add("inputContainer")
@@ -27,6 +31,8 @@
                 inputField.setAttribute("type", "text");
                 inputContainer.appendChild(inputField);
                 inputField.addEventListener("keyup", filterDropdown);
+                inputField.addEventListener("input", e => checkValidity(e.target));
+                inputField.addEventListener("input", e => checkBoardValidity());
                 inputField.addEventListener("keypress", validate);
                 inputField.addEventListener("blur", hideDropdown);
                 inputField.addEventListener("focus", filterDropdown);
@@ -39,14 +45,8 @@
                 tableRow.appendChild(cell)
             }
         }
-    }
 
-    function id(idName) {
-      return document.getElementById(idName);
-    }
-
-    function gen(tagName) {
-      return document.createElement(tagName);
+        id("startGame").disabled = true;
     }
 
     function validate(e) {
@@ -55,10 +55,17 @@
       }
     }
 
+    function cycleColors(e) {
+      let color = e.target.getAttribute("color");
+      let nextColor = COLORS[(COLORS.indexOf(color) + 1) % COLORS.length];
+      e.target.setAttribute("color", nextColor);
+    }
+
     function selectSuggestion(e) {
-      console.log("Select suggestoin");
       let input = e.target.parentElement.parentElement.getElementsByTagName("input")[0];
       input.value = e.target.textContent;
+      checkValidity(input);
+      checkBoardValidity();
     }
 
     function hideDropdown(e) {
@@ -95,6 +102,66 @@
           dropdown.appendChild(dropdownItem);
         });
       }
-      console.log(suggestions);
+    }
+
+    function checkValidity(input) {
+      let inputValue = input.value.toUpperCase();
+      let valid = terms.includes(inputValue);
+      input.setCustomValidity(valid ? "" : "Invalid input");
+    }
+
+    function checkBoardValidity() {
+      let valid = true;
+      let termLists = getBoardTerms();
+      let allTerms = termLists.blue.concat(termLists.red).concat(termLists.blank).concat(termLists.black);
+      for (let i = 0; i < allTerms.length; i++) {
+        if (!terms.includes(allTerms[i])) {
+          valid = false;
+          break;
+        }
+      }
+      id("startGame").disabled = !valid;
+    }
+
+    function getBoardTerms() {
+      let blue = [];
+      let black = [];
+      let red = [];
+      let blank = [];
+
+      qsa("#board > tr > td").forEach(cell => {
+        let input = cell.querySelector(".inputContainer > input");
+        let color = cell.getAttribute("color");
+        let term = input.value;
+        switch(color) {
+          case "blue":
+            blue.push(term);
+          case "red":
+            red.push(term);
+          case "blank":
+            blank.push(term)
+          case "black":
+            black.push(term)
+        }
+      });
+
+      return {
+        blue,
+        red,
+        blank,
+        black
+      };
+    }
+
+    function id(idName) {
+      return document.getElementById(idName);
+    }
+
+    function gen(tagName) {
+      return document.createElement(tagName);
+    }
+
+    function qsa(selector) {
+      return document.querySelectorAll(selector);
     }
  })();
