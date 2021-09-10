@@ -1,0 +1,113 @@
+* {
+    font-family: Sans-serif;
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#board {
+    display: flex;
+    flex-direction: column;
+    width: 50vw;
+    height: 30vw;
+}
+
+#board > tr {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+#board > tr > td {
+    border-radius: 0.25vw;
+    border:0.1vw solid black;
+    flex-grow: 1;
+    margin: 0.25vw;
+    display: flex;
+}
+
+
+#board > tr > td[color="blank"][revealed="true"] {
+    background-color: #f2d8b7;
+}
+
+#board > tr > td[color="blue"][revealed="true"] {
+    background-color: blue;
+}
+
+
+#board > tr > td[color="red"][revealed="true"] {
+    background-color: red;
+}
+
+#board > tr > td[color="black"][revealed="true"] {
+    background-color: black;
+}
+
+.inputContainer {
+    border-radius: 0.1vw;
+    border:0.1vw solid black;
+    display: flex;
+    width: 60%;
+    height: 20%;
+    margin: auto;
+    position:relative;
+    justify-content: center;
+}
+
+.dropdownContainer {
+    border: 0.1vw solid black;
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdownContainer > span {
+    padding: 0.2vw 0.2vw;
+    display: block;
+}
+
+.dropdownContainer > span:hover {
+    background-color: #cccccc;
+}
+
+.inputContainer > input {
+    flex-grow: 1;
+    font-size: 0.6vw;
+    text-align: center;
+    min-width: 0; /* Override default sizing */
+    text-transform: uppercase;
+}
+
+/* Remove default chrome input outline */
+input {
+    border: none;
+    outline: none;
+}
+
+.inputContainer > input:invalid {
+    background-color: pink;
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    font-size: 0.6vw;
+    widtH: 6vw;
+    height: 2vw;
+    border-radius: 0.25vw;
+    border:0.1vw solid black;
+    background-color: pink;
+}
+
+button:disabled {
+    background-color: grey;
+}
