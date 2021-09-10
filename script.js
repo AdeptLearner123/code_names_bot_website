@@ -3,11 +3,17 @@
  (function() {
 
     window.addEventListener("load", init);
-    
+
     const COLORS = ["blank", "blue", "red", "black"];
 
     function init() {
       createBoard()
+
+      let startGameButton = id("startGame");
+      startGameButton.disabled = true;
+      startGameButton.addEventListener("click", startGame);
+
+      id("clueButtonList").classList.add("hidden");
     }
 
     function createBoard() {
@@ -21,6 +27,7 @@
                 cell.setAttribute("row", row);
                 cell.setAttribute("col", col);
                 cell.setAttribute("color", COLORS[0]);
+                cell.setAttribute("revealed", true);
                 cell.addEventListener("mousedown", cycleColors);
 
                 let inputContainer = gen("div")
@@ -45,8 +52,6 @@
                 tableRow.appendChild(cell)
             }
         }
-
-        id("startGame").disabled = true;
     }
 
     function validate(e) {
@@ -132,7 +137,7 @@
       qsa("#board > tr > td").forEach(cell => {
         let input = cell.querySelector(".inputContainer > input");
         let color = cell.getAttribute("color");
-        let term = input.value;
+        let term = input.value.toUpperCase();
         switch(color) {
           case "blue":
             blue.push(term);
@@ -151,6 +156,23 @@
         blank,
         black
       };
+    }
+
+    function startGame() {
+      qsa("#board > tr > td").forEach(cell => {
+        cell.setAttribute("revealed", false);
+        cell.removeEventListener("mousedown", cycleColors);
+        cell.addEventListener("mousedown", revealColor);
+        let input = cell.querySelector(".inputContainer > input");
+        input.disabled = true;
+      });
+
+      id("startGame").classList.add("hidden");
+      id("clueButtonList").classList.remove("hidden");
+    }
+
+    function revealColor(e) {
+      e.target.setAttribute("revealed", true);
     }
 
     function id(idName) {
